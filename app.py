@@ -11,7 +11,7 @@ def hello_world():  # put application's code here
     if request.method == "GET":
         return render_template("home.html")
     elif request.method == "POST":
-        return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-role-bot.herokuapp.com%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
+        return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-bot.herokuapp.com%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
 
 
 @app.route('/discord/oauth/?code=<code>&state=<state>')
@@ -22,7 +22,7 @@ def authorized_discord():
         "client_id": os.environ.get("CLIENT_ID"),
         "client_secret": os.environ.get("CLIENT_SECRET"),
         "grant_type": "authorization_code",
-        "redirect_uri": "https://czvr-role-bot.herokuapp.com/discord/success"
+        "redirect_uri": "https://czvr-bot.herokuapp.com/discord/success"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
