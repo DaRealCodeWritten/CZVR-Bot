@@ -14,7 +14,7 @@ def hello_world():  # put application's code here
         return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-bot.herokuapp.com%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
 
 
-@app.route('/discord/oauth/?code=<code>&state=<state>')
+@app.route('/discord/oauth/?code=<code>')
 def authorized_discord():
     code = request.args.get("code")
     data = {
