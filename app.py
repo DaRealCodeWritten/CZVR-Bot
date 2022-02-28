@@ -22,7 +22,7 @@ def authorized_discord():
         "client_id": os.environ.get("CLIENT_ID"),
         "client_secret": os.environ.get("CLIENT_SECRET"),
         "grant_type": "authorization_code",
-        "redirect_uri": parse.urlparse("https://czvr-bot.herokuapp.com/discord/success/")
+        "redirect_uri": "czvr-bot.herokuapp.com/discord/success/"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
