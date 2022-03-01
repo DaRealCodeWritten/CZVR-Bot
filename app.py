@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def hello_world():  # put application's code here
+    """Index route func, move along"""
     if request.method == "GET":
         return render_template("home.html")
     elif request.method == "POST":
@@ -16,6 +17,7 @@ def hello_world():  # put application's code here
 
 @app.route('/discord/oauth/', methods=["GET",])
 def authorized_discord():
+    """Callback URI from Discord OAuth"""
     data = {
         "code": request.args.get("code"),
         "client_id": os.environ.get("CLIENT_ID"),
@@ -33,6 +35,7 @@ def authorized_discord():
 
 @app.route("/discord/success")
 def discord_success():
+    """Route func for successful integration with Discord"""
     return render_template("discord_success.html")
 
 
