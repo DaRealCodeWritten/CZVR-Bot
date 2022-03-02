@@ -1,10 +1,19 @@
 import os
+import psycopg2
 import requests
+import subprocess
 from flask import Flask, render_template, request, redirect
 
 
 app = Flask(__name__)
-
+db = psycopg2.connect(
+    database="dekd8sq403uspf",
+    user="tpgzyglxzdlzgq",
+    host="ec2-34-231-183-74.compute-1.amazonaws.com",
+    password=os.environ.get("DB_PASS"),
+    port="5432"
+)
+dbcrs = db.cursor()
 
 @app.route('/', methods=["GET", "POST"])
 def hello_world():  # put application's code here
@@ -23,7 +32,6 @@ def authorized_discord():
         "client_id": os.environ.get("CLIENT_ID"),
         "client_secret": os.environ.get("CLIENT_SECRET"),
         "grant_type": "authorization_code",
-        "redirect_uri": "http://czvr-bot.herokuapp.com/discord/success/"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -44,6 +52,7 @@ try:
         key.write(os.environ.get("SSL_KEY"))
     with open("cert.pem", "w") as cert:
         cert.write(os.environ.get("SSL_CERT"))
+    subprocess.run("python bot.py")
     app.run(None, 80, ssl_context=("cert.pem", "key.pem"))
 except Exception as e:
     print(e)
