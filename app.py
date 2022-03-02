@@ -21,7 +21,7 @@ def hello_world():  # put application's code here
     if request.method == "GET":
         return render_template("home.html")
     elif request.method == "POST":
-        return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-bot.herokuapp.com%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
+        return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-bot.xyz%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
 
 
 @app.route('/discord/oauth/', methods=["GET",])
@@ -38,7 +38,7 @@ def authorized_discord():
     }
     r = requests.post("https://discord.com/api/v8/oauth2/token", headers=header, data=data)
     print(r.json())
-    return redirect("https://czvr-bot.herokuapp.com/discord/success")
+    return redirect("https://czvr-bot.xyz/discord/success")
 
 
 @app.route("/discord/success")
@@ -52,7 +52,6 @@ try:
         key.write(os.environ.get("SSL_KEY"))
     with open("cert.pem", "w") as cert:
         cert.write(os.environ.get("SSL_CERT"))
-    subprocess.run("python bot.py")
     app.run(None, 80, ssl_context=("cert.pem", "key.pem"))
 except Exception as e:
     print(e)
