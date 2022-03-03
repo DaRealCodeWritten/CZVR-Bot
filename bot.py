@@ -112,10 +112,10 @@ def is_dev():
 @bot.command()
 async def fupdate(ctx):
     """Force a complete recall of the database"""
-    start = time.now()
+    start = time.time()
     await update_tasker()
     await ctx.author.send("Completed database recall")
-    end = time.now()
+    end = time.time()
     embed = discord.embed(title="Completed", description=f"Completion time: {round(end - start, 3)}")
     await ctx.send(embed=embed)
 
