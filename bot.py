@@ -1,4 +1,5 @@
 import auth
+import time
 import discord
 import psycopg2
 from typing import Union
@@ -111,14 +112,20 @@ def is_dev():
 @bot.command()
 async def fupdate(ctx):
     """Force a complete recall of the database"""
+    start = time.now()
     await update_tasker()
     await ctx.author.send("Completed database recall")
+    end = time.now()
+    embed = discord.embed(title="Completed", description=f"Completion time: {round(end - start, 3)}")
+    await ctx.send(embed=embed)
 
 
 @is_dev()
 @bot.command()
 async def starttask(ctx):
     update_tasker.start()
+    embed = discord.embed(title="Completed", description=f"Task started")
+    await ctx.send(embed=embed)
 
 
 @is_dev()
