@@ -116,7 +116,7 @@ async def fupdate(ctx):
     await update_tasker()
     await ctx.author.send("Completed database recall")
     end = time.time()
-    embed = discord.embed(title="Completed", description=f"Completion time: {round(end - start, 3)}")
+    embed = discord.Embed(title="Completed", description=f"Completion time: {round(end - start, 3)}")
     await ctx.send(embed=embed)
 
 
@@ -124,7 +124,7 @@ async def fupdate(ctx):
 @bot.command()
 async def starttask(ctx):
     update_tasker.start()
-    embed = discord.embed(title="Completed", description=f"Task started")
+    embed = discord.Embed(title="Completed", description=f"Task started")
     await ctx.send(embed=embed)
 
 
