@@ -1,19 +1,20 @@
 import os
+import auth
 import psycopg2
 import requests
-import subprocess
 from flask import Flask, render_template, request, redirect
 
 
+config = auth.return_auth()
 app = Flask(__name__)
 db = psycopg2.connect(
-    database="dekd8sq403uspf",
-    user="tpgzyglxzdlzgq",
-    host="ec2-34-231-183-74.compute-1.amazonaws.com",
-    password=os.environ.get("DB_PASS"),
+    database=config["DATABASE"],
+    user=config["USER"],
+    host=config["HOST"],
+    password=config["PASS_DEV"],
     port="5432"
 )
-dbcrs = db.cursor()
+
 
 @app.route('/', methods=["GET", "POST"])
 def hello_world():  # put application's code here
@@ -29,8 +30,8 @@ def authorized_discord():
     """Callback URI from Discord OAuth"""
     data = {
         "code": request.args.get("code"),
-        "client_id": os.environ.get("CLIENT_ID"),
-        "client_secret": os.environ.get("CLIENT_SECRET"),
+        "client_id": config["CLIENT_ID"],
+        "client_secret": config["CLIENT_SECRET"],
         "grant_type": "authorization_code",
     }
     header = {
@@ -48,10 +49,6 @@ def discord_success():
 
 
 try:
-    with open("key.pem", "w") as key:
-        key.write(os.environ.get("SSL_KEY"))
-    with open("cert.pem", "w") as cert:
-        cert.write(os.environ.get("SSL_CERT"))
-    app.run(None, 80, ssl_context=("cert.pem", "key.pem"))
+    app.run(None, 80, debug=True)
 except Exception as e:
     print(e)
