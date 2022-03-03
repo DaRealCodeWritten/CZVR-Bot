@@ -49,6 +49,6 @@ def discord_success():
 
 
 try:
-    app.run(None, 80, debug=True)
+    app.run(None, 80)
 except Exception as e:
     print(e)
