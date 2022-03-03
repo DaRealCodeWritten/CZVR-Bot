@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2cc8f9f2-5ca4-4896-83b0-d34c8f3f9db5" name="Changes" comment="Add database, move all auth to ignored file, add auth module, remove SSL, make bot do stuff">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="2cc8f9f2-5ca4-4896-83b0-d34c8f3f9db5" name="Changes" comment="Fix newline issue">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/key.pem" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +132,7 @@
       <workItem from="1646166527107" duration="3381000" />
       <workItem from="1646187410834" duration="14044000" />
       <workItem from="1646212694650" duration="7586000" />
-      <workItem from="1646269945312" duration="14514000" />
+      <workItem from="1646269945312" duration="17832000" />
     </task>
     <task id="LOCAL-00001" summary="Amend redirect URLs">
       <created>1645922249884</created>
@@ -247,7 +239,21 @@
       <option name="project" value="LOCAL" />
       <updated>1646201623794</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Add database, move all auth to ignored file, add auth module, remove SSL, make bot do stuff">
+      <created>1646296824956</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1646296824956</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Fix newline issue">
+      <created>1646297071538</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1646297071538</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,9 +277,10 @@
     <MESSAGE value="make bot run, c/dos, c/dos/run, run dos run" />
     <MESSAGE value="commit 5000 html files" />
     <MESSAGE value="Add database, move all auth to ignored file, add auth module, remove SSL, make bot do stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add database, move all auth to ignored file, add auth module, remove SSL, make bot do stuff" />
+    <MESSAGE value="Fix newline issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix newline issue" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/CZVR_Bot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1646274082095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CZVR_Bot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1646299406095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

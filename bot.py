@@ -8,7 +8,7 @@ from discord.ext import commands, tasks
 def find_rating(member_roles, member_rating) -> Union[int, None]:
     rids = [role.id for role in member_roles]
     for rid in rids:
-        for rating, role in ratings.items():
+        for rating, role in dev_ratings.items():
             if role == rid:
                 if rating != member_rating:
                     return role
@@ -65,7 +65,7 @@ async def update_tasker():
             for role in member.roles:
                 utd = False
                 try:
-                    if role.id == ratings[record[2]]:
+                    if role.id == dev_ratings[record[2]]:
                         # User's rating role is up to date, ignore
                         utd = True
                         print("Member up to date")
@@ -77,7 +77,7 @@ async def update_tasker():
                     owner = await bot.fetch_user(703104766632263730)
                     await owner.send("WARN: Erroneous DB entry")
             if not utd:
-                role = guild.get_role(ratings[record[2]])
+                role = guild.get_role(dev_ratings[record[2]])
                 await member.add_roles(role, reason="Automatic role update")
                 not_matching = find_rating(member.roles, record[2])
                 if not_matching is None:
@@ -92,12 +92,13 @@ def is_dev():
         if ctx.author.id in [
             703104766632263730,
             212654520855953409,
-            715758796059967498
+            715758796059967498,
+            160534932970536960
         ]:
             return True
         else:
-            embed = discord.Embed(name="Access denied",
-                                  description="This command is available to devs",
+            embed = discord.Embed(title="Access denied",
+                                  description="This command is available to devs only",
                                   color=discord.Colour.red()
                                   )
             await ctx.send(embed=embed)
@@ -106,23 +107,28 @@ def is_dev():
     return discord.ext.commands.check(predicate)
 
 
+@is_dev()
 @bot.command()
 async def fupdate(ctx):
     """Force a complete recall of the database"""
     await update_tasker()
+    await ctx.author.send("Completed database recall")
 
 
+@is_dev()
 @bot.command()
 async def starttask(ctx):
     update_tasker.start()
 
 
+@is_dev()
 @bot.command()
 async def dbexec(ctx, *, query):
     try:
         dbcrs = db.cursor()
         dbcrs.execute(query)
-        await ctx.author.send(list(dbcrs))
+        if "SELECT" not in query.lower():
+            await ctx.author.send(list(dbcrs))
         dbcrs.close()
         db.commit()
         await ctx.send("Command completed")
@@ -137,6 +143,7 @@ async def dbexec(ctx, *, query):
             pass
 
 
+@is_dev()
 @bot.command()
 async def stop(ctx):
     await bot.close()
