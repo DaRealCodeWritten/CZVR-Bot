@@ -17,12 +17,6 @@ def find_rating(member_roles, member_rating) -> Union[int, None]:
 
 
 config = auth.return_auth()
-dev_opts = {
-    "GUILD_ID": 947764065118335016,
-    "VATCAN_RQST": None,
-    "VATSIM_OAUTH": "https://auth-dev.vatsim.net",
-    "DB_TABLE": "dev"
-}
 ratings = {
     10: None,
     11: None,
@@ -52,8 +46,8 @@ db = psycopg2.connect(
 @tasks.loop(hours=24)
 async def update_tasker():
     with db.cursor() as dbcrs:
-        guild: discord.Guild = bot.get_guild(dev_opts["GUILD_ID"])
-        dbcrs.execute("SELECT CID, DCID, RATING FROM {}".format(dev_opts["DB_TABLE"]))
+        guild: discord.Guild = bot.get_guild(config["GUILD_ID"])
+        dbcrs.execute("SELECT * FROM {}".format(config["DATABASE_TABLE"]))
         print("Executed query, doing loop")
         for record in dbcrs:
             print("Got guild!")
@@ -67,7 +61,7 @@ async def update_tasker():
                 utd = False
                 try:
                     if role.id == dev_ratings[record[2]]:
-                        # User's rating role is up to date, ignore
+                        # User's rating role is up-to-date, ignore
                         utd = True
                         print("Member up to date")
                         continue
@@ -116,7 +110,10 @@ async def fupdate(ctx):
     await update_tasker()
     await ctx.author.send("Completed database recall")
     end = time.time()
-    embed = discord.Embed(title="Completed", description=f"Completion time: {round(end - start, 3)}", color=discord.Colour.green())
+    embed = discord.Embed(title="Completed",
+                          description=f"Completion time: {round(end - start, 3)}",
+                          color=discord.Colour.green()
+                          )
     await ctx.send(embed=embed)
 
 
@@ -143,6 +140,7 @@ async def dbexec(ctx, *, query):
         print(e)
         await ctx.send("Command failed for reason: {}".format(e))
     finally:
+        # noinspection PyBroadException
         try:
             dbcrs.close()
             db.commit()
