@@ -48,6 +48,33 @@ def discord_success():
     return render_template("discord_success.html")
 
 
+@app.route("/vatsim/oauth")
+def vatsim_link():
+    data = {
+        "client_id": config["VATSIM_CLIENT_ID"],
+        "client_secret": config["VATSIM_CLIENT_SECRET"],
+        "code": request.args.get("code"),
+        "grant_type": "authorization_code"
+    }
+    returned = requests.post(f"{config['VATSIM_AUTH']}/oauth/token", data=data)
+    jsonify = returned.json()
+    token = jsonify["access_token"]
+    headers = {
+        "Authorization": token,
+        "Accept": "application/json"
+    }
+    user_data = requests.post(f"{config['VATSIM_AUTH']}/api/user", headers=headers)
+    juser = user_data.json()
+    cid = int(juser["data"]["cid"])
+    crs = db.cursor()
+    try:
+        crs.execute(f"INSERT INTO {config['DATABASE_TABLE']} VALUES (? ? ?)", (cid, 0, 0))
+    except:
+        pass
+    crs.close()
+    db.commit()
+
+
 try:
     app.run(None, 80)
 except Exception as e:
