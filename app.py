@@ -19,10 +19,12 @@ db = psycopg2.connect(
 @app.route('/', methods=["GET", "POST"])
 def hello_world():
     """Index route func, move along"""
-    if request.method == "GET":
-        return render_template("home.html")
-    elif request.method == "POST":
-        return redirect("https://discord.com/api/oauth2/authorize?client_id=947062830358736897&redirect_uri=https%3A%2F%2Fczvr-bot.xyz%2Fdiscord%2Foauth%2F&response_type=code&scope=identify%20guilds.join")
+    return render_template("home.html")
+
+
+@app.route("/vatsim")
+def sso():
+    return render_template("login.html")
 
 
 @app.route('/discord/oauth/', methods=["GET",])
@@ -86,6 +88,6 @@ def vatsim_link():
 
 
 try:
-    app.run("0.0.0.0", 80)
+    app.run("0.0.0.0")
 except Exception as e:
     print(e)
