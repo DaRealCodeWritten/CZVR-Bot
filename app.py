@@ -22,7 +22,7 @@ def hello_world():
     return render_template("home.html")
 
 
-@app.route("/#vatsim")
+@app.route("/vatsim")
 def sso():
     return render_template("login.html")
 
