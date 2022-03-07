@@ -17,7 +17,7 @@ db = psycopg2.connect(
 
 
 @app.route('/', methods=["GET", "POST"])
-def hello_world():  # put application's code here
+def hello_world():
     """Index route func, move along"""
     if request.method == "GET":
         return render_template("home.html")
@@ -50,6 +50,7 @@ def discord_success():
 
 @app.route("/vatsim/oauth")
 def vatsim_link():
+    """Redirect URL to link to VATSIM"""
     data = {
         "client_id": config["VATSIM_CLIENT_ID"],
         "client_secret": config["VATSIM_CLIENT_SECRET"],

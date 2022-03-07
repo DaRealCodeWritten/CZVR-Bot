@@ -45,6 +45,7 @@ db = psycopg2.connect(
 
 @tasks.loop(hours=24)
 async def update_tasker():
+    """Async task to update roles as needed"""
     with db.cursor() as dbcrs:
         guild: discord.Guild = bot.get_guild(config["GUILD_ID"])
         dbcrs.execute("SELECT * FROM {}".format(config["DATABASE_TABLE"]))
@@ -83,6 +84,7 @@ async def update_tasker():
 
 
 def is_dev():
+    """Decorator to ensure the user is a dev"""
     async def predicate(ctx):
         if ctx.author.id in [
             703104766632263730,
@@ -120,6 +122,7 @@ async def fupdate(ctx):
 @is_dev()
 @bot.command()
 async def starttask(ctx):
+    """Starts the updater task, pending deprecation in favor of automation"""
     update_tasker.start()
     embed = discord.Embed(title="Completed", description=f"Task started", color=discord.Colour.green())
     await ctx.send(embed=embed)
@@ -128,10 +131,11 @@ async def starttask(ctx):
 @is_dev()
 @bot.command()
 async def dbexec(ctx, *, query):
+    """Execute a given query against the db"""
     try:
         dbcrs = db.cursor()
         dbcrs.execute(query)
-        if "SELECT" not in query.lower():
+        if "SELECT" in query.lower():
             await ctx.author.send(list(dbcrs))
         dbcrs.close()
         db.commit()
@@ -151,6 +155,7 @@ async def dbexec(ctx, *, query):
 @is_dev()
 @bot.command()
 async def stop(ctx):
+    """Panic button (closes the bot)"""
     await bot.close()
 
 
