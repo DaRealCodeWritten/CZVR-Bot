@@ -139,6 +139,7 @@ def profile():
 @login_required
 @app.route("/logout")
 def logout():
+    users.pop(current_user.alternative_id)
     logout_user()
     return render_template("logout.html")
 
