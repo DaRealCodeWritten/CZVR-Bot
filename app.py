@@ -2,7 +2,7 @@ import auth
 import psycopg2
 import requests
 from flask_login import LoginManager, login_user, current_user, logout_user, UserMixin, login_required
-from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, request, redirect, abort, send_from_directory
 
 
 config = auth.return_auth()
@@ -43,6 +43,11 @@ db = psycopg2.connect(
 def hello_world():
     """Index route func, move along"""
     return render_template("home.html")
+
+
+@app.route("/.well-known")
+def well_known():
+    return send_from_directory("/CZVR-Bot/.well-known/")
 
 
 @app.route("/vatsim")
