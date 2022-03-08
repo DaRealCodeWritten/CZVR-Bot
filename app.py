@@ -6,11 +6,11 @@ from flask import Flask, render_template, request, redirect, abort
 
 
 config = auth.return_auth()
+users = {}
 app = Flask(__name__)
 app.secret_key = config["SITE_CLIENT_SECRET"]
 log_man = LoginManager()
 log_man.init_app(app)
-users = {}
 
 
 class User(UserMixin):
@@ -148,7 +148,8 @@ def logout():
     return render_template("logout.html")
 
 
-try:
-    app.run("0.0.0.0", 80, ssl_context="adhoc")
-except Exception as e:
-    print(e)
+if __name__ == "__main__":
+    try:
+        app.run("0.0.0.0", 80, ssl_context="adhoc")
+    except Exception as e:
+        print(e)
