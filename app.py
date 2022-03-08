@@ -1,11 +1,30 @@
 import auth
 import psycopg2
 import requests
-from flask import Flask, render_template, request, redirect
+from flask_login import LoginManager, login_user, current_user, logout_user, UserMixin, login_required
+from flask import Flask, render_template, request, redirect, abort
 
 
 config = auth.return_auth()
 app = Flask(__name__)
+log_man = LoginManager()
+log_man.init_app(app)
+
+
+class User(UserMixin):
+    def __init__(self, cid: int, *args, **kwargs):
+        self.alternative_id = str(cid)
+        super.__init__(*args, **kwargs)
+
+    def get_id(self):
+        return self.alternative_id
+
+
+@log_man.user_loader
+def load_user(user_id):
+    return User.query.filter_by(alternative_id=user_id).first()
+
+
 db = psycopg2.connect(
     database=config["DATABASE"],
     user=config["USER"],
@@ -26,6 +45,7 @@ def sso():
     return render_template("login.html")
 
 
+@login_required
 @app.route('/discord/oauth/', methods=["GET",])
 def authorized_discord():
     """Callback URI from Discord OAuth"""
@@ -38,8 +58,26 @@ def authorized_discord():
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
     }
-    r = requests.post("https://discord.com/api/v8/oauth2/token", headers=header, data=data)
-    print(r.json())
+    r = requests.post("https://discord.com/api/oauth2/token", headers=header, data=data)
+    data = r.json()
+    token = data.get["access_token"]
+    if token is None:
+        return abort(400)
+    header["Authorization"] = f"Bearer {token}"
+    udata = requests.get("https://discord.com/api/users/@me", headers=header)
+    uid = udata.json.get("id")
+    if uid is None:
+        return abort(403)
+    crs = db.cursor()
+    crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET dcid = ? WHERE cid = ?", (uid, int(current_user.get_id())))
+    crs.close()
+    db.commit()
+    header.pop("Content-Type")
+    header["Authorization"] = config["TOKEN"]
+    data = {
+        "access_token": f"Bearer {token}"
+    }
+    requests.put(f"https://discord.com/api/guilds/947764065118335016/members/{uid}", data=data, headers=header)
     return redirect("https://czvr-bot.xyz/discord/success")
 
 
@@ -82,8 +120,25 @@ def vatsim_link():
             pass
         crs.close()
         db.commit()
+        user = User(cid)
+        login_user(user)
+        return redirect("http://server.czvr-bot.xyz:5000/profile")
     except Exception as e:
         print(e)
+        return e.__str__()
+
+
+@login_required
+@app.route("/profile")
+def profile():
+    return render_template("profile.html", cid=current_user.get_id())
+
+
+@login_required
+@app.route("/logout")
+def profile():
+    logout_user()
+    return render_template("logout.html")
 
 
 try:
