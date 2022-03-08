@@ -14,7 +14,6 @@ log_man.init_app(app)
 class User(UserMixin):
     def __init__(self, cid: int, *args, **kwargs):
         self.alternative_id = str(cid)
-        super.__init__(*args, **kwargs)
 
     def get_id(self):
         return self.alternative_id
