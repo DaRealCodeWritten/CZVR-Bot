@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, redirect, abort
 
 config = auth.return_auth()
 app = Flask(__name__)
+app.secret_key = config["SITE_CLIENT_SECRET"]
 log_man = LoginManager()
 log_man.init_app(app)
 
