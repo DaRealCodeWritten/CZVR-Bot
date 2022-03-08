@@ -69,11 +69,11 @@ def vatsim_link():
             "Authorization": f"Bearer {token}",
             "Accept": "application/json"
         }
-        user_data = requests.post(f"{config['VATSIM_AUTH']}/api/user", headers=headers)
+        user_data = requests.get(f"{config['VATSIM_AUTH']}/api/user", headers=headers)
         juser = user_data.json()
         udata = juser.get("data")
         if udata is None: # Site threw an error AGAIN FAIL
-            return f"Failed, no user data {juser}"
+            return f"Failed, no user data"
         cid = int(udata.get("cid"))
         crs = db.cursor()
         try:
