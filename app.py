@@ -47,7 +47,7 @@ def hello_world():
 
 @app.route("/.well-known/acme-challenge")
 def well_known():
-    return send_from_directory(".well-known/acme-challenge")
+    return send_from_directory(".well-known/acme-challenge", "/CZVR-Bot/.well-known/acme-challenge")
 
 
 @app.route("/vatsim")
