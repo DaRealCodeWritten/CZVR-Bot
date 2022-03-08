@@ -72,6 +72,7 @@ def vatsim_link():
         user_data = requests.post(f"{config['VATSIM_AUTH']}/api/user", headers=headers)
         juser = user_data.json()
         udata = juser.get("data")
+        print(juser)
         if udata is None: # Site threw an error AGAIN FAIL
             return "Failed, no user data"
         cid = int(udata.get("cid"))
