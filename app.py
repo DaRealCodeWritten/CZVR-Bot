@@ -149,6 +149,6 @@ def logout():
 
 
 try:
-    app.run("0.0.0.0")
+    app.run("0.0.0.0", ssl_context="adhoc")
 except Exception as e:
     print(e)
