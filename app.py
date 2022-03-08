@@ -1,4 +1,3 @@
-import os
 import auth
 import psycopg2
 import requests
