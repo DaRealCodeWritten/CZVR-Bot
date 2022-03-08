@@ -39,15 +39,10 @@ db = psycopg2.connect(
 )
 
 
-@app.route('/home', methods=["GET", "POST"])
+@app.route('/', methods=["GET", "POST"])
 def hello_world():
     """Index route func, move along"""
     return render_template("home.html")
-
-
-@app.route("/.well-known/acme-challenge")
-def well_known():
-    return send_from_directory(".well-known/acme-challenge", "/CZVR-Bot/.well-known/acme-challenge")
 
 
 @app.route("/vatsim")
