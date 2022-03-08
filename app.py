@@ -155,6 +155,6 @@ def logout():
 
 if __name__ == "__main__":
     try:
-        app.run("0.0.0.0", 80, ssl_context="adhoc")
+        app.run("0.0.0.0", 80)
     except Exception as e:
         print(e)
