@@ -58,13 +58,13 @@ def vatsim_link():
             "client_secret": config["VATSIM_CLIENT_SECRET"],
             "code": request.args.get("code"),
             "grant_type": "authorization_code",
-            "redirect_uri": "http://server.czvr-bot.com:500/vatsim/oauth"
+            "redirect_uri": "http://server.czvr-bot.xyz:5000/vatsim/oauth"
         }
         returned = requests.post(f"{config['VATSIM_AUTH']}/oauth/token", data=data)
         jsonify = returned.json()
         token = jsonify.get("access_token")
         if token is None: # Site probably threw an error, FAIL
-            return "Failed"
+            return "Failed, no token"
         headers = {
             "Authorization": f"Bearer {token}",
             "Accept": "application/json"
@@ -73,7 +73,7 @@ def vatsim_link():
         juser = user_data.json()
         udata = juser.get("data")
         if udata is None: # Site threw an error AGAIN FAIL
-            return "Failed"
+            return "Failed, no user data"
         cid = int(udata.get("cid"))
         crs = db.cursor()
         try:
