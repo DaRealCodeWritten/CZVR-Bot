@@ -22,7 +22,7 @@ class User(UserMixin):
 
 @log_man.user_loader
 def load_user(user_id):
-    return User.query.filter_by(alternative_id=user_id).first()
+    return User.alternative_id
 
 
 db = psycopg2.connect(
