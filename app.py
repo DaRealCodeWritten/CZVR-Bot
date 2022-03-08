@@ -136,7 +136,7 @@ def profile():
 
 @login_required
 @app.route("/logout")
-def profile():
+def logout():
     logout_user()
     return render_template("logout.html")
 
