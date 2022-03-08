@@ -65,7 +65,7 @@ def authorized_discord():
         return abort(400)
     header["Authorization"] = f"Bearer {token}"
     udata = requests.get("https://discord.com/api/users/@me", headers=header)
-    uid = udata.json.get("id")
+    uid = udata.json().get("id")
     if uid is None:
         return abort(403)
     crs = db.cursor()
