@@ -50,7 +50,7 @@ def sso():
     return render_template("login.html")
 
 
-@login_required()
+@login_required
 @app.route('/discord/oauth/', methods=["GET",])
 def authorized_discord():
     """Callback URI from Discord OAuth"""
@@ -134,13 +134,13 @@ def vatsim_link():
         return e.__str__()
 
 
-@login_required()
+@login_required
 @app.route("/profile")
 def profile():
     return render_template("profile.html", cid=current_user.get_id())
 
 
-@login_required()
+@login_required
 @app.route("/logout")
 def logout():
     users.pop(current_user.alternative_id)
