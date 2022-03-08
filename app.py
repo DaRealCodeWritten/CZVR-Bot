@@ -101,7 +101,7 @@ def vatsim_link():
             "client_secret": config["VATSIM_CLIENT_SECRET"],
             "code": request.args.get("code"),
             "grant_type": "authorization_code",
-            "redirect_uri": "http://server.czvr-bot.xyz:5000/vatsim/oauth"
+            "redirect_uri": "https://server.czvr-bot.xyz:5000/vatsim/oauth"
         }
         returned = requests.post(f"{config['VATSIM_AUTH']}/oauth/token", data=data)
         jsonify = returned.json()
@@ -128,7 +128,7 @@ def vatsim_link():
         user = User(cid)
         login_user(user)
         users[str(cid)] = user
-        return redirect("http://server.czvr-bot.xyz:5000/profile")
+        return redirect("https://server.czvr-bot.xyz:5000/profile")
     except Exception as e:
         print(e)
         return e.__str__()
