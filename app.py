@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.secret_key = config["SITE_CLIENT_SECRET"]
 log_man = LoginManager()
 log_man.init_app(app)
+users = {}
 
 
 class User(UserMixin):
@@ -21,8 +22,8 @@ class User(UserMixin):
 
 
 @log_man.user_loader
-def load_user(user_id):
-    return User.alternative_id
+def load_user(user_id: str):
+    return users.get(user_id)
 
 
 db = psycopg2.connect(
@@ -122,6 +123,7 @@ def vatsim_link():
         db.commit()
         user = User(cid)
         login_user(user)
+        users[str(cid)] = user
         return redirect("http://server.czvr-bot.xyz:5000/profile")
     except Exception as e:
         print(e)
