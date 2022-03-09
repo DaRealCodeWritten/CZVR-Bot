@@ -91,7 +91,7 @@ def authorized_discord():
     finally:
         crs.close()
         db.commit()
-    return redirect("https://czvr-bot.xyz/discord/success")
+    return redirect("https://server-czvr-bot.xyz/discord/success")
 
 
 @app.route("/discord/success")
