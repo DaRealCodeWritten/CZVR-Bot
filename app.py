@@ -1,4 +1,5 @@
 import auth
+from urllib import parse
 import psycopg2
 import requests
 from flask_login import LoginManager, login_user, current_user, logout_user, UserMixin, login_required
@@ -59,7 +60,7 @@ def authorized_discord():
         "client_id": config["CLIENT_ID"],
         "client_secret": config["CLIENT_SECRET"],
         "grant_type": "authorization_code",
-        "redirect_uri": "https://server.czvr-bot.xyz/discord/success"
+        "redirect_uri": "https%3A%2F%2Fserver.czvr-bot.xyz%3A5000/discord/success"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
