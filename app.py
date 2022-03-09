@@ -158,6 +158,10 @@ def logout():
 
 if __name__ == "__main__":
     try:
-        app.run("0.0.0.0", 80)
+        app.run("0.0.0.0", 5000, ssl_context=(
+            "/etc/letsencrypt/live/server.czvr-bot.xyz/fullchain.pem",
+            "/etc/letsencrypt/live/server.czvr-bot.xyz/privkey.pem"
+            )
+        )
     except Exception as e:
         print(e)
