@@ -22,7 +22,7 @@ class User(UserMixin):
 
     @property
     def is_authenticated(self):
-        return users.get(self.alternative_id) is not None
+        return (users.get(self.alternative_id) is not None)
 
 
 @log_man.user_loader
@@ -137,13 +137,13 @@ def vatsim_link():
 @login_required
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", cid=current_user.alternative_id)
+    return render_template("profile.html", cid=current_user.get_id())
 
 
 @login_required
 @app.route("/logout")
 def logout():
-    users.pop(current_user.alternative_id)
+    users.pop(current_user.get_id())
     logout_user()
     return render_template("logout.html")
 
