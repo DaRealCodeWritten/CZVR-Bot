@@ -60,7 +60,7 @@ def authorized_discord():
         "client_id": config["CLIENT_ID"],
         "client_secret": config["CLIENT_SECRET"],
         "grant_type": "authorization_code",
-        "redirect_uri": "https://server.czvr-bot.xyz:5000/discord/oauth"
+        "redirect_uri": "https://server.czvr-bot.xyz:5000/discord/oauth/"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
