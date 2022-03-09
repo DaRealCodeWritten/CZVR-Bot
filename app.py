@@ -65,7 +65,7 @@ def authorized_discord():
     }
     r = requests.post("https://discord.com/api/oauth2/token", headers=header, data=data)
     data = r.json()
-    token = data.get["access_token"]
+    token = data.get("access_token")
     if token is None:
         return abort(400)
     header["Authorization"] = f"Bearer {token}"
