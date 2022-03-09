@@ -60,7 +60,7 @@ def authorized_discord():
         "client_id": config["CLIENT_ID"],
         "client_secret": config["CLIENT_SECRET"],
         "grant_type": "authorization_code",
-        "redirect_uri": "https%3A%2F%2Fserver.czvr-bot.xyz%3A5000/discord/success"
+        "redirect_uri": "https://server.czvr-bot.xyz:5000/discord/oauth"
     }
     header = {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -76,15 +76,21 @@ def authorized_discord():
     if uid is None:
         return abort(403)
     crs = db.cursor()
-    crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET dcid = ? WHERE cid = ?", (uid, int(current_user.get_id())))
-    crs.close()
-    db.commit()
-    header.pop("Content-Type")
-    header["Authorization"] = config["TOKEN"]
-    data = {
-        "access_token": f"Bearer {token}"
-    }
-    requests.put(f"https://discord.com/api/guilds/947764065118335016/members/{uid}", data=data, headers=header)
+    try:
+        crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET dcid = ? WHERE cid = ?", (uid, int(current_user.get_id())))
+        crs.close()
+        db.commit()
+        header["Content-Type"] = "application/json"
+        header["Authorization"] = config["TOKEN"]
+        data = {
+            "access_token": f"Bearer {token}"
+        }
+        requests.put(f"https://discord.com/api/guilds/947764065118335016/members/{uid}", data=data, headers=header)
+    except Exception as e:
+        print(e)
+    finally:
+        crs.close()
+        db.commit()
     return redirect("https://czvr-bot.xyz/discord/success")
 
 
