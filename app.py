@@ -14,7 +14,7 @@ log_man.init_app(app)
 
 
 class User(UserMixin):
-    def __init__(self, cid: int, *args, **kwargs):
+    def __init__(self, cid: int):
         self.alternative_id = str(cid)
 
     def get_id(self):
@@ -137,7 +137,7 @@ def vatsim_link():
 @login_required
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", cid=current_user.get_id())
+    return render_template("profile.html", cid=current_user.alternative_id)
 
 
 @login_required
