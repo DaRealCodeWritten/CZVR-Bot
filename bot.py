@@ -2,8 +2,30 @@ import auth
 import time
 import discord
 import psycopg2
+import requests
 from typing import Union
 from discord.ext import commands, tasks
+
+
+def refresh_vatcan():
+    headers = {
+        "Authorization": config["VATCAN_KEY"]
+    }
+    crs = db.cursor()
+    crs.execute("SELECT * FROM {}".format(config["DATABASE_TABLE"]))
+    for entry in crs:
+        if entry[1] == 0: # User doesn't have discord linked, ignored
+            continue
+        else:
+            data = requests.get(f"https://api.vatcan.ca/v2/user/{entry[0]}", headers=headers)
+            if data.status_code == 404: # Somehow a user without a CID got committed or someone forgot to switch off the dev table
+                continue
+            else:
+                udata = data.json()
+                crs.close()
+                crs = db.cursor()
+                crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET rating = {int(udata['data']['rating'])} WHERE cid = {entry[0]}")
+                crs.close()
 
 
 def find_rating(member_roles, member_rating) -> Union[int, None]:
@@ -18,6 +40,12 @@ def find_rating(member_roles, member_rating) -> Union[int, None]:
 
 config = auth.return_auth()
 ratings = {
+    2: None,
+    3: None,
+    4: None,
+    5: None,
+    7: None,
+    8: None,
     10: None,
     11: None,
     12: None

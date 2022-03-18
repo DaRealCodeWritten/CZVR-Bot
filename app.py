@@ -2,8 +2,17 @@ import auth
 from urllib import parse
 import psycopg2
 import requests
-from flask_login import LoginManager, login_user, current_user, logout_user, UserMixin, login_required
-from flask import Flask, render_template, request, redirect, abort, send_from_directory
+from flask_login import LoginManager, login_user, current_user, logout_user, UserMixin, login_required, AnonymousUserMixin
+from flask import Flask, render_template, request, redirect, abort
+
+
+class Anon(AnonymousUserMixin):
+    def __init__(self):
+        pass
+
+    @property
+    def is_authenticated(self):
+        return False
 
 
 config = auth.return_auth()
@@ -11,6 +20,7 @@ users = {}
 app = Flask(__name__)
 app.secret_key = config["SITE_CLIENT_SECRET"]
 log_man = LoginManager()
+log_man.anonymous_user = Anon
 log_man.init_app(app)
 
 
@@ -51,8 +61,8 @@ def sso():
     return render_template("login.html")
 
 
-@login_required
 @app.route('/discord/oauth/', methods=["GET",])
+@login_required
 def authorized_discord():
     """Callback URI from Discord OAuth"""
     data = {
@@ -77,7 +87,9 @@ def authorized_discord():
         return abort(403)
     crs = db.cursor()
     try:
-        crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET dcid = ? WHERE cid = ?", (uid, int(current_user.get_id())))
+        crs.execute(
+            f"UPDATE {config['DATABASE_TABLE']} SET dcid = $1 WHERE cid = $2 USING {uid}, {current_user.get_id()}"
+        )
         crs.close()
         db.commit()
         header["Content-Type"] = "application/json"
@@ -126,9 +138,10 @@ def vatsim_link():
         if udata is None: # Site threw an error AGAIN FAIL
             return f"Failed, no user data"
         cid = int(udata.get("cid"))
+        rating = int(udata["vatsim"]["rating"]["id"])
         crs = db.cursor()
         try:
-            crs.execute(f"INSERT INTO {config['DATABASE_TABLE']} VALUES (? ? ?)", (cid, 0, 0))
+            crs.execute(f"INSERT INTO {config['DATABASE_TABLE']} VALUES ({cid}, 0, {rating})")
         except:
             pass
         crs.close()
@@ -142,14 +155,14 @@ def vatsim_link():
         return e.__str__()
 
 
-@login_required
 @app.route("/profile")
+@login_required
 def profile():
     return render_template("profile.html", cid=current_user.get_id())
 
 
-@login_required
 @app.route("/logout")
+@login_required
 def logout():
     users.pop(current_user.get_id())
     logout_user()
