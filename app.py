@@ -33,7 +33,7 @@ class User(UserMixin):
 
     @property
     def is_authenticated(self):
-        return (users.get(self.alternative_id) is not None)
+        return users.get(self.alternative_id) is not None
 
 
 @log_man.user_loader

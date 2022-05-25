@@ -6,7 +6,7 @@ import requests
 from typing import Union
 from discord.ext import commands, tasks
 
-
+"""
 def refresh_vatcan():
     headers = {
         "Authorization": config["VATCAN_KEY"]
@@ -26,12 +26,13 @@ def refresh_vatcan():
                 crs = db.cursor()
                 crs.execute(f"UPDATE {config['DATABASE_TABLE']} SET rating = {int(udata['data']['rating'])} WHERE cid = {entry[0]}")
                 crs.close()
+"""
 
 
 def find_rating(member_roles, member_rating) -> Union[int, None]:
     rids = [role.id for role in member_roles]
     for rid in rids:
-        for rating, role in dev_ratings.items():
+        for rating, role in rating_table.items():
             if role == rid:
                 if rating != member_rating:
                     return role
@@ -39,29 +40,9 @@ def find_rating(member_roles, member_rating) -> Union[int, None]:
 
 
 config = auth.return_auth()
-ratings = {
-    2: None,
-    3: None,
-    4: None,
-    5: None,
-    7: None,
-    8: None,
-    10: None,
-    11: None,
-    12: None
-}
-dev_ratings = {
-    2: 948854540994744330,
-    3: 948854399810285588,
-    4: 948854291676942336,
-    5: 948853954840776764,
-    7: 948853678788460564,
-    8: 948853042814517299,
-    10: 948508009783525377,
-    11: 948516513810358302,
-    12: 948766506735509534
-}
-bot = commands.Bot(command_prefix=["!"], case_insensitive=True)
+guilds = auth.return_guild()
+rating_table = guilds["GUILD_ROLES"]
+bot = commands.Bot(command_prefix=["!"], case_insensitive=True, intents=discord.Intents.all())
 db = psycopg2.connect(
     database=config["DATABASE"],
     user=config["USER"],
@@ -71,11 +52,18 @@ db = psycopg2.connect(
 )
 
 
+@bot.event
+async def on_guild_channel_create(channel):
+    setting = guilds["GUILD_SETTING"]
+    if channel.category.id == int(guilds[f"GUILD_{guilds['GUILD_SETTING']}_CATEGORY"]):
+        await channel.send(f"<@&{guilds[f'GUILD_{setting}_EVENTS_ID']}> New Event!")
+
+
 @tasks.loop(hours=24)
 async def update_tasker():
     """Async task to update roles as needed"""
     with db.cursor() as dbcrs:
-        guild: discord.Guild = bot.get_guild(config["GUILD_ID"])
+        guild: discord.Guild = bot.get_guild(int(guilds[f"GUILD_{guilds['GUILD_SETTING']}"]))
         dbcrs.execute("SELECT * FROM {}".format(config["DATABASE_TABLE"]))
         print("Executed query, doing loop")
         for record in dbcrs:
@@ -89,7 +77,7 @@ async def update_tasker():
             for role in member.roles:
                 utd = False
                 try:
-                    if role.id == dev_ratings[record[2]]:
+                    if role.id == rating_table[record[2]]:
                         # User's rating role is up-to-date, ignore
                         utd = True
                         print("Member up to date")
@@ -101,7 +89,7 @@ async def update_tasker():
                     owner = await bot.fetch_user(703104766632263730)
                     await owner.send("WARN: Erroneous DB entry")
             if not utd:
-                role = guild.get_role(dev_ratings[record[2]])
+                role = guild.get_role(rating_table[record[2]])
                 await member.add_roles(role, reason="Automatic role update")
                 not_matching = find_rating(member.roles, record[2])
                 if not_matching is None:
@@ -113,6 +101,7 @@ async def update_tasker():
 
 def is_dev():
     """Decorator to ensure the user is a dev"""
+
     async def predicate(ctx):
         if ctx.author.id in [
             703104766632263730,
@@ -163,7 +152,7 @@ async def dbexec(ctx, *, query):
     try:
         dbcrs = db.cursor()
         dbcrs.execute(query)
-        if "SELECT" in query.lower():
+        if "select" in query.lower():
             await ctx.author.send(list(dbcrs))
         dbcrs.close()
         db.commit()
@@ -185,6 +174,20 @@ async def dbexec(ctx, *, query):
 async def stop(ctx):
     """Panic button (closes the bot)"""
     await bot.close()
+
+
+@bot.command(description="Gets a METAR for the specified ICAO")
+async def metar(ctx, icao: str):
+    if len(list(icao)) != 4 or not icao.isalnum():
+        await ctx.send(embed=discord.Embed(title="Error", description="Invalid ICAO", color=discord.Color.blurple()))
+        return
+    else:
+        response = requests.get("https://metar.vatsim.net/metar.php?id={}".format(icao))
+        embed = discord.Embed(title="METAR Report For {}".format(icao),
+                              description=response.text,
+                              color=discord.Color.blurple()
+                              )
+        await ctx.send(embed=embed)
 
 
 bot.run(config["TOKEN"])
